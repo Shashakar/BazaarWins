@@ -2,7 +2,7 @@ from PIL import Image, ImageEnhance, ImageOps
 import pytesseract
 
 # Load the image
-image_path = 'training_images/10winsvictory.png'  # Update with the actual path
+image_path = 'training_images/game_examples/10winsvictory.png'  # Update with the actual path
 
 # Load the original image
 image = Image.open(image_path)
