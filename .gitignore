@@ -3,3 +3,6 @@
 /contrast_images
 /grayscale_images
 *.tr
+/__pycache__
+contrast_images/G.png
+grayscale_images/G.png

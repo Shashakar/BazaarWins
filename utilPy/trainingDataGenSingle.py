@@ -1,7 +1,6 @@
 import os
 import subprocess
 
-from convertToGrayscale import grayscale_folder
 from fileSetup import binary_folder, grayscale_folder, contrast_folder, training_folder
 
 base_name = "0"
