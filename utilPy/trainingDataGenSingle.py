@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from fileSetup import binary_folder, grayscale_folder, contrast_folder, training_folder
+from tesseract.fileSetup import binary_folder, grayscale_folder, contrast_folder, training_folder
 
 base_name = "0"
 image_name = base_name + ".png"

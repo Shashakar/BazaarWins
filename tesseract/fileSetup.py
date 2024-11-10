@@ -2,10 +2,10 @@ from PIL import Image, ImageEnhance
 import os
 import shutil
 
-training_folder = os.path.join(".", "training_images")
-grayscale_folder = os.path.join(".", "grayscale_images")
-contrast_folder = os.path.join(".", "contrast_images")
-binary_folder = os.path.join(".", "binary_images")
+training_folder = os.path.join("..", "training_images")
+grayscale_folder = os.path.join("..", "grayscale_images")
+contrast_folder = os.path.join("..", "contrast_images")
+binary_folder = os.path.join("..", "binary_images")
 tessdata_folder_windows = os.path.join("C:", "Program Files", "Tesseract-OCR", "tessdata")
 tessdata_folder_mac = os.path.join("/", "usr", "local", "share", "tessdata")
 

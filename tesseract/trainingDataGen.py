@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 from fileSetup import grayscale_folder, training_folder, binary_folder, contrast_folder, setup_data
-from combineTrainingData import combine_data, import_data
+from tesseract.combineTrainingData import combine_data, import_data
 from tesseractInteraction import handle_traineddata
 
 # generates combined training data .tr file

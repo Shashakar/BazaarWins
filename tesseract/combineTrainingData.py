@@ -2,7 +2,7 @@ import os
 import subprocess
 from fileSetup import training_folder, contrast_folder, grayscale_folder, binary_folder
 
-output_tr_file = os.path.join(".", "combined_training_data.tr")
+output_tr_file = os.path.join("..", "combined_training_data.tr")
 unicharset_output = "unicharset"
 
 def combine_data():

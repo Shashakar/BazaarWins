@@ -41,7 +41,7 @@ def combine_traineddata_files(data_folder, output_file):
 def move_traineddata_into_tesseract():
     tessdata_path = get_tessdata_path()
     if tessdata_path:
-        traineddata_path = os.path.join(".", data_folder, output_file)
+        traineddata_path = os.path.join("..", data_folder, output_file)
         destination_path = os.path.join(tessdata_path, output_file)
         try:
             # Use shutil.move to move the traineddata file
