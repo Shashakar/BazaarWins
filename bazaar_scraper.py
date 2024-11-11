@@ -1,18 +1,19 @@
 import os
-import time
-import pygetwindow as gw
-import pyautogui
 import logging
-from logging_bazaar import setup_logging
-from watcher import watch_for_wins_screen
-from text_detection import handle_full_screenshot, get_user_and_title_from_image, get_wins_from_image, get_stats_from_image, get_text_from_image, get_first_text_from_image
-from crop_images import crop_and_save_images
+import time
 from screenshot_bazaar import take_screenshot_of_window
+from text_detection import handle_full_screenshot, get_user_and_title_from_image, get_wins_from_image, \
+    get_stats_from_image, get_text_from_image, get_first_text_from_image
+from crop_images import crop_and_save_images
+from logging_bazaar import setup_logging
+from watcher import is_bazaar_active, detect_wins_screen, take_full_screenshot
 
 # Set up logging
 logger = setup_logging(logging.DEBUG, "Main")
 
 data_folder = os.path.join(".", "data")
+training_images = os.path.join(".", "training_images")
+
 items_image = os.path.join(data_folder, "_items.png")
 stats_image = os.path.join(data_folder, "_stats.png")
 skills_image = os.path.join(data_folder, "_skills.png")
@@ -24,12 +25,15 @@ xp_image = os.path.join(data_folder, "_xp.png")
 income_image = os.path.join(data_folder, "_income.png")
 money_image = os.path.join(data_folder, "_money.png")
 
+wins_template = os.path.join(training_images, "wins_template.png")
+next_screen_template = os.path.join(training_images, "next_screen_template.png")
+
 default_crop_areas_percent = {
-    "title_username": (0.0, 0.185, 0.0, 0.3),       # Grand Founder and Username area (Top Left)
-    "wins": (0.15, 0.28, 0.29, 0.75),             # Number of Wins and Victory Type (Top Middle)
-    "items": (0.28, 0.56, 0.34, 0.99),            # Item Square Images (Upper Middle Right)
-    "stats": (0.56, 0.625, 0.34, 0.94),            # Stats (Center Middle Right)
-    "skills": (0.625, 0.86, 0.34, 0.94)            # Skill Circular Images (Lower Bottom Right)
+    "title_username": (0.0, 0.185, 0.0, 0.3),  # Grand Founder and Username area (Top Left)
+    "wins": (0.09, 0.28, 0.26, 0.75),  # Number of Wins and Victory Type (Top Middle)
+    "items": (0.28, 0.56, 0.34, 0.99),  # Item Square Images (Upper Middle Right)
+    "stats": (0.56, 0.625, 0.34, 0.94),  # Stats (Center Middle Right)
+    "skills": (0.625, 0.86, 0.34, 0.94)  # Skill Circular Images (Lower Bottom Right)
 }
 
 stats_top = 0.125
@@ -41,6 +45,7 @@ stats_crop_coords = {
     "income": (stats_top, stats_bot, .782, .86),  # Coordinates for "5"
     "money": (stats_top, stats_bot, .89, .99)  # Coordinates for "8"
 }
+
 
 def workflow():
     try:
@@ -78,14 +83,67 @@ def workflow():
         money = get_first_text_from_image(money_image)
         logger.info(f"Money: {money}")
 
-        logger.info(f"Bazaar Run Complete. \nRun Data for '{title}' {user}:\nWins: {wins_number}\nWins Status: "
-                    f"{wins_status}\nMax Health: {health}\nPrestige Remaining: {prestige}\nXP: {xp}\nIncome Per Turn: "
-                    f"{income}\nMoney Remaining: {money}")
+        logger.info(f"Bazaar Run Complete. Run Data for '{title}' {user}:")
+        logger.info(f"Wins: {wins_number}\nWins Status: {wins_status}")
+        logger.info(
+            f"Max Health: {health}\nPrestige Remaining: {prestige}\nXP: {xp}\nIncome Per Turn: {income}\nMoney Remaining: {money}")
     except Exception as e:
         logger.error(f"An error occurred during the workflow: {e}")
 
+
 if __name__ == "__main__":
     logger.info("Starting to watch for the WINS screen while 'The Bazaar' is active...")
-    watch_for_wins_screen()
-    logger.info("WINS screen detected. Starting main workflow...")
-    workflow()
+
+    wins_screen_active = False
+    non_active_count = 0
+    active_count = 0
+    while True:
+        try:
+            # Check if "The Bazaar" is the active window
+            if is_bazaar_active():
+                non_active_count = 0
+
+                if active_count == 0:
+                    logger.info("'The Bazaar' is active. Waiting for the WINS screen...")
+
+
+                active_count += 1
+
+                if active_count % 30 == 0:
+                    active_count = 0
+
+                # Take a full screenshot
+                screenshot = take_full_screenshot()
+
+                # Check if the WINS screen is visible
+                detected, _ = detect_wins_screen(screenshot, wins_template)
+
+                if detected and not wins_screen_active:
+                    # WINS screen detected for the first time
+                    logger.info("WINS screen detected. Starting main workflow...")
+                    workflow()
+                    wins_screen_active = True  # Set flag to prevent duplicate processing
+
+                elif wins_screen_active:
+                    # Check if the next screen is visible
+                    next_screen_detected, _ = detect_wins_screen(screenshot, next_screen_template)
+                    if next_screen_detected:
+                        logger.info("Next screen detected. Resetting state for watching the WINS screen.")
+                        wins_screen_active = False
+
+            else:
+                active_count = 0
+                if non_active_count == 0:
+                    logger.info("'The Bazaar' is not active. Waiting for it to become active...")
+
+                non_active_count += 1
+
+                if non_active_count % 30 == 0:
+                    non_active_count = 0
+
+            # Sleep for a short time to avoid excessive CPU usage
+            time.sleep(1)
+
+        except Exception as e:
+            logger.error(f"An error occurred in the main loop: {e}")
+            time.sleep(5)  # Pause before retrying in case of an error
