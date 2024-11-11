@@ -1,12 +1,12 @@
 import logging
 
 # Set up the basic configuration for logging
-def setup_logging(level):
+def setup_logging(level, logger_name):
     # Define logging formats for console and file output
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     # Create a logger
-    logger = logging.getLogger('CustomLogger')
+    logger = logging.getLogger(logger_name)
     logger.setLevel(level)
 
     # Console Handler (for DEBUG level)

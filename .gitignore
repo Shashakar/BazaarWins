@@ -7,3 +7,5 @@
 contrast_images/G.png
 grayscale_images/G.png
 *.tr
+application.log
+wins_screen_*

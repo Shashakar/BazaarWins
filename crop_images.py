@@ -1,33 +1,25 @@
 import os
-
 import cv2
+import logging
+from logging_bazaar import setup_logging
 
-base_path = os.path.join(".", "training_images", "game_examples")
-
-# Paths to the images
-image_paths = [
- #  "6winsbronzevictory_raidus.png",
- #   "10winsgoldvictoryemez.png",
-    "10winsperfectvictoryjohn.png"
-]
+# Set up logging
+logger = setup_logging(logging.DEBUG, "ImageCropper")
 
 # Cropping areas defined as percentages of a 1920x1080 image
-crop_areas_percent = {
-    "title_username": (0.0, 0.185, 0.0, 0.208),       # Grand Founder and Username area (Top Left)
-    "wins": (0.093, 0.278, 0.260, 0.625),             # Number of Wins and Victory Type (Top Middle)
-    "items": (0.278, 0.556, 0.339, 0.990),            # Item Square Images (Upper Middle Right)
-    "stats": (0.556, 0.625, 0.339, 0.938),            # Stats (Center Middle Right)
-    "skills": (0.625, 0.856, 0.339, 0.938)            # Skill Circular Images (Lower Bottom Right)
-}
+# y, y, x, x
+data_folder = os.path.join(".", "data")
+
 
 def crop_and_save_images(image_path, crop_areas_percent):
-    image_path_full = os.path.join(base_path, image_path)
+    image_path_full = os.path.join(image_path)
+
     # Load the image
     image = cv2.imread(image_path_full)
 
     # Ensure the image was loaded successfully
     if image is None:
-        print(f"Error: Unable to load image '{image_path_full}'")
+        logger.error(f"Error: Unable to load image '{image_path_full}'")
         return
 
     # Get image dimensions
@@ -49,12 +41,27 @@ def crop_and_save_images(image_path, crop_areas_percent):
 
         # Crop the image
         cropped_image = image[y_start:y_end, x_start:x_end]
+        upscale_factor = 2  # You can adjust this as needed
+        cropped_image = cv2.resize(cropped_image, None, fx=upscale_factor, fy=upscale_factor,
+                                   interpolation=cv2.INTER_CUBIC)
 
         # Save the cropped image
         output_path = f"{image_path.split('.')[0]}_{area_name}.png"
-        cv2.imwrite(output_path, cropped_image)
-        print(f"Saved cropped image: {output_path}")
 
-# Process each image
-for image_path in image_paths:
-    crop_and_save_images(image_path, crop_areas_percent)
+        # If data folder doesn't exist, create it
+        if not os.path.exists(data_folder):
+            os.makedirs(data_folder)
+
+        output_path = os.path.join(data_folder, output_path)
+        cv2.imwrite(output_path, cropped_image)
+        logger.info(f"Saved cropped image: {output_path}")
+
+
+if __name__ == "__main__":
+    # Example usage
+    example_image_path = "example_screenshot.png"
+    example_crop_areas = {
+        "area1": (0.1, 0.3, 0.1, 0.3),
+        "area2": (0.4, 0.6, 0.4, 0.6)
+    }
+    crop_and_save_images(example_image_path, example_crop_areas)
