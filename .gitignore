@@ -9,3 +9,6 @@ grayscale_images/G.png
 *.tr
 application.log
 wins_screen_*
+/tesseract/data
+/tesseract
+/data
