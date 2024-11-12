@@ -105,10 +105,7 @@ def workflow():
     except Exception as e:
         logger.error(f"An error occurred during the workflow: {e}")
 
-
-if __name__ == "__main__":
-    logger.info("Starting to watch for the WINS screen while 'The Bazaar' is active...")
-
+def looper():
     wins_screen_active = False
     non_active_count = 0
     active_count = 0
@@ -120,7 +117,6 @@ if __name__ == "__main__":
 
                 if active_count == 0:
                     logger.info("'The Bazaar' is active. Waiting for the WINS screen...")
-
 
                 active_count += 1
 
@@ -136,7 +132,7 @@ if __name__ == "__main__":
                 if detected and not wins_screen_active:
                     # WINS screen detected for the first time
                     logger.info("WINS screen detected. Starting main workflow...")
-                    workflow()
+                    workflow()  # Trigger the workflow to scrape and upload stats
                     wins_screen_active = True  # Set flag to prevent duplicate processing
 
                 elif wins_screen_active:
@@ -162,3 +158,7 @@ if __name__ == "__main__":
         except Exception as e:
             logger.error(f"An error occurred in the main loop: {e}")
             time.sleep(5)  # Pause before retrying in case of an error
+
+if __name__ == "__main__":
+    logger.info("Starting to watch for the WINS screen while 'The Bazaar' is active...")
+    looper()
