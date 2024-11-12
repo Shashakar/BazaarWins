@@ -1,6 +1,8 @@
 import os
 import logging
 import time
+
+from bazaar_api import upload_game_stats
 from screenshot_bazaar import take_screenshot_of_window
 from text_detection import handle_full_screenshot, get_user_and_title_from_image, get_wins_from_image, \
     get_stats_from_image, get_text_from_image, get_first_text_from_image
@@ -87,6 +89,19 @@ def workflow():
         logger.info(f"Wins: {wins_number}\nWins Status: {wins_status}")
         logger.info(
             f"Max Health: {health}\nPrestige Remaining: {prestige}\nXP: {xp}\nIncome Per Turn: {income}\nMoney Remaining: {money}")
+
+        game_stats = {
+            "username": user,
+            "wins": wins_number,
+            "victory_type": wins_status,
+            "health": health,
+            "prestige": prestige,
+            "xp": xp,
+            "income": income,
+            "money": money
+        }
+        upload_game_stats(game_stats)
+
     except Exception as e:
         logger.error(f"An error occurred during the workflow: {e}")
 
