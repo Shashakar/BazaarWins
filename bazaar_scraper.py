@@ -3,6 +3,7 @@ import logging
 import time
 
 from bazaar_api import upload_game_stats
+from cloudinary_handler import upload_image_to_cloudinary
 from screenshot_bazaar import take_screenshot_of_window
 from text_detection import handle_full_screenshot, get_user_and_title_from_image, get_wins_from_image, \
     get_stats_from_image, get_text_from_image, get_first_text_from_image
@@ -90,6 +91,14 @@ def workflow():
         logger.info(
             f"Max Health: {health}\nPrestige Remaining: {prestige}\nXP: {xp}\nIncome Per Turn: {income}\nMoney Remaining: {money}")
 
+        # Upload the items image to Cloudinary
+        items_image_url = upload_image_to_cloudinary(items_image)
+        if not items_image_url:
+            logger.error("Failed to upload items image to Cloudinary.")
+            items_image_url = "Error"
+
+        logger.info(f"Items image uploaded to Cloudinary. URL: {items_image_url}")
+
         game_stats = {
             "username": user,
             "wins": wins_number,
@@ -98,7 +107,8 @@ def workflow():
             "prestige": prestige,
             "xp": xp,
             "income": income,
-            "money": money
+            "money": money,
+            "items_image": items_image_url
         }
         upload_game_stats(game_stats)
 

@@ -63,8 +63,6 @@ destination_directory = os.path.join("..", "bazaarai", "item_images")
 image_extensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff"}
 
 def create_items_folders(items):
-
-
     # Create folders for each item with each suffix
     for item in items:
         # Format item name to be lowercase and remove spaces
@@ -137,8 +135,6 @@ def get_all_that_have_images():
             print(f"No images found in folder: {folder_path}")
 
 def move_images_to_train_and_validate():
-
-
     # Function to get all image files in a folder
     def get_image_files(folder_path):
         return [file for file in os.listdir(folder_path) if any(file.lower().endswith(ext) for ext in image_extensions)]
@@ -175,4 +171,7 @@ def move_images_to_train_and_validate():
                 print(f"Skipped folder: {folder_path} (less than 2 images)")
 
 if __name__ == "__main__":
-    move_images_to_train_and_validate()
+    #move_images_to_train_and_validate()
+    create_items_folders(vanessa_items)
+    create_items_folders(monster_items)
+    create_items_folders(dooley_items)
