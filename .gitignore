@@ -12,3 +12,6 @@ wins_screen_*
 /tesseract/data
 /tesseract
 /data
+/bazaarai/data
+/bazaarai/item_images
+bazaarai/item_classifier.pth
