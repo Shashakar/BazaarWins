@@ -1,15 +1,23 @@
 import os
 import logging
 import time
+import platform
 
 from bazaar_api import upload_game_stats
 from cloudinary_handler import upload_image_to_cloudinary
-from screenshot_bazaar import take_screenshot_of_window
+from logging_bazaar import setup_logging
 from text_detection import handle_full_screenshot, get_user_and_title_from_image, get_wins_from_image, \
     get_stats_from_image, get_text_from_image, get_first_text_from_image
 from crop_images import crop_and_save_images
-from logging_bazaar import setup_logging
 from watcher import is_bazaar_active, detect_wins_screen, take_full_screenshot
+
+# Use the appropriate screenshot handler depending on the platform
+if platform.system() == "Windows":
+    from windows_screenshot_bazaar import take_screenshot_of_window
+    wins_template = os.path.join(".", "training_images", "windows_wins_template.png")
+else:
+    from mac_screenshot_bazaar import take_screenshot_of_window
+    wins_template = os.path.join(".", "training_images", "mac_wins_template.png")
 
 # Set up logging
 logger = setup_logging(logging.DEBUG, "Main")
@@ -28,7 +36,6 @@ xp_image = os.path.join(data_folder, "_xp.png")
 income_image = os.path.join(data_folder, "_income.png")
 money_image = os.path.join(data_folder, "_money.png")
 
-wins_template = os.path.join(training_images, "wins_template.png")
 next_screen_template = os.path.join(training_images, "next_screen_template.png")
 
 default_crop_areas_percent = {
@@ -40,13 +47,13 @@ default_crop_areas_percent = {
 }
 
 stats_top = 0.125
-stats_bot = .69
+stats_bot = .875
 stats_crop_coords = {
     "health": (stats_top, stats_bot, .120, .292),  # Coordinates for "250"
     "prestige": (stats_top, stats_bot, .369, .49),  # Coordinates for "0"
-    "xp": (stats_top, stats_bot, .576, .69),  # Coordinates for "1"
-    "income": (stats_top, stats_bot, .782, .86),  # Coordinates for "5"
-    "money": (stats_top, stats_bot, .89, .99)  # Coordinates for "8"
+    "xp": (stats_top, stats_bot, .535, .69),  # Coordinates for "1"
+    "income": (stats_top, stats_bot, .75, .86),  # Coordinates for "5"
+    "money": (stats_top, stats_bot, .85, .99)  # Coordinates for "8"
 }
 
 
