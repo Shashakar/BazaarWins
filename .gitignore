@@ -15,3 +15,4 @@ wins_screen_*
 /bazaarai/data
 /bazaarai/item_images
 bazaarai/item_classifier.pth
+src/screenshot.png

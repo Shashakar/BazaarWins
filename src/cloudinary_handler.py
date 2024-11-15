@@ -1,7 +1,6 @@
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-import psycopg2
 import logging
 from logging_bazaar import setup_logging
 

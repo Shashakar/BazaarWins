@@ -14,7 +14,7 @@ def setup_logging(level, logger_name):
     console_handler.setFormatter(formatter)
 
     # File Handler (for INFO and ERROR)
-    file_handler = logging.FileHandler('application.log')
+    file_handler = logging.FileHandler('../application.log')
     file_handler.setFormatter(formatter)
 
     # Clear existing handlers if needed to avoid duplicatesz

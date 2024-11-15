@@ -3,14 +3,14 @@ import time
 import pygetwindow as gw
 import pyautogui
 import logging
-from logging_bazaar import setup_logging
+from src.logging_bazaar import setup_logging
 
 # Set up logging
 logger = setup_logging(logging.DEBUG, "ScreenshotHandler")
 
 # Example usage
 window_title = "The Bazaar"  # Replace with the title or part of the title of the window
-data_folder = os.path.join(".", "data")
+data_folder = os.path.join("..", "data")
 
 # Function to take a screenshot of a specific window and determine if it's windowed or maximized
 def take_screenshot_of_window():

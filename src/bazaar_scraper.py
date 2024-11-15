@@ -14,7 +14,7 @@ from watcher import is_bazaar_active, detect_wins_screen, take_full_screenshot
 # Set up logging
 logger = setup_logging(logging.DEBUG, "Main")
 
-data_folder = os.path.join(".", "data")
+data_folder = os.path.join("..", "data")
 training_images = os.path.join(".", "training_images")
 
 items_image = os.path.join(data_folder, "_items.png")

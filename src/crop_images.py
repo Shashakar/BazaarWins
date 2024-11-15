@@ -8,7 +8,7 @@ logger = setup_logging(logging.DEBUG, "ImageCropper")
 
 # Cropping areas defined as percentages of a 1920x1080 image
 # y, y, x, x
-data_folder = os.path.join(".", "data")
+data_folder = os.path.join("..", "data")
 
 
 def crop_and_save_images(image_path, crop_areas_percent):

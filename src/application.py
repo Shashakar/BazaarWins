@@ -2,8 +2,6 @@ import logging
 import platform
 import threading
 from bazaar_scraper import workflow
-import macmenubar
-import windowstray
 from logging_bazaar import setup_logging
 
 logger = setup_logging(logging.DEBUG, "ApplicationHandler")
