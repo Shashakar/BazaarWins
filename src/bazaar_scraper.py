@@ -1,29 +1,38 @@
 import os
 import logging
+import sys
 import time
 import platform
 
 from bazaar_api import upload_game_stats
 from cloudinary_handler import upload_image_to_cloudinary
 from logging_bazaar import setup_logging
-from text_detection import handle_full_screenshot, get_user_and_title_from_image, get_wins_from_image, \
-    get_stats_from_image, get_text_from_image, get_first_text_from_image
+from text_detection import get_user_and_title_from_image, get_wins_from_image, \
+    get_first_text_from_image
 from crop_images import crop_and_save_images
 from watcher import is_bazaar_active, detect_wins_screen, take_full_screenshot
+
+if getattr(sys, 'frozen', False):  # Running as a PyInstaller executable
+    base_path = sys._MEIPASS
+else:
+    base_path = os.path.dirname(os.path.abspath(__file__))
+
+templates_folder = os.path.join(base_path, 'templates')
 
 # Use the appropriate screenshot handler depending on the platform
 if platform.system() == "Windows":
     from windows_screenshot_bazaar import take_screenshot_of_window
-    wins_template = os.path.join(".", "training_images", "windows_wins_template.png")
+    wins_template = os.path.join(templates_folder, "windows_wins_template.png")
 else:
     from mac_screenshot_bazaar import take_screenshot_of_window
-    wins_template = os.path.join(".", "training_images", "mac_wins_template.png")
+    wins_template = os.path.join(templates_folder, "mac_wins_template.png")
+
+next_screen_template = os.path.join(templates_folder, "next_screen_template.png")
 
 # Set up logging
 logger = setup_logging(logging.DEBUG, "Main")
 
 data_folder = os.path.join("..", "data")
-training_images = os.path.join(".", "training_images")
 
 items_image = os.path.join(data_folder, "_items.png")
 stats_image = os.path.join(data_folder, "_stats.png")
@@ -36,7 +45,7 @@ xp_image = os.path.join(data_folder, "_xp.png")
 income_image = os.path.join(data_folder, "_income.png")
 money_image = os.path.join(data_folder, "_money.png")
 
-next_screen_template = os.path.join(training_images, "next_screen_template.png")
+
 
 default_crop_areas_percent = {
     "title_username": (0.0, 0.185, 0.0, 0.3),  # Grand Founder and Username area (Top Left)
@@ -51,7 +60,7 @@ stats_bot = .875
 stats_crop_coords = {
     "health": (stats_top, stats_bot, .120, .292),  # Coordinates for "250"
     "prestige": (stats_top, stats_bot, .369, .49),  # Coordinates for "0"
-    "xp": (stats_top, stats_bot, .535, .69),  # Coordinates for "1"
+    "xp": (stats_top, stats_bot, .55, .69),  # Coordinates for "1"
     "income": (stats_top, stats_bot, .75, .86),  # Coordinates for "5"
     "money": (stats_top, stats_bot, .85, .99)  # Coordinates for "8"
 }
@@ -149,6 +158,7 @@ def looper():
                 if detected and not wins_screen_active:
                     # WINS screen detected for the first time
                     logger.info("WINS screen detected. Starting main workflow...")
+                    time.sleep(1.5)
                     workflow()  # Trigger the workflow to scrape and upload stats
                     wins_screen_active = True  # Set flag to prevent duplicate processing
 

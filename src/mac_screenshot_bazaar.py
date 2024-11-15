@@ -2,7 +2,7 @@ import os
 import logging
 import Quartz.CoreGraphics as CG
 from PIL import Image
-from src.logging_bazaar import setup_logging
+from logging_bazaar import setup_logging
 
 # Set up logging
 logger = setup_logging(logging.DEBUG, "MacScreenshotHandler")

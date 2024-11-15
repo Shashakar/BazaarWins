@@ -16,3 +16,7 @@ wins_screen_*
 /bazaarai/item_images
 bazaarai/item_classifier.pth
 src/screenshot.png
+/src/__pycache__
+/src/build
+/src/data
+/src/dist

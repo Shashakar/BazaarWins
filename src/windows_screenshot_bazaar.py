@@ -3,7 +3,7 @@ import time
 import pygetwindow as gw
 import pyautogui
 import logging
-from src.logging_bazaar import setup_logging
+from logging_bazaar import setup_logging
 
 # Set up logging
 logger = setup_logging(logging.DEBUG, "ScreenshotHandler")

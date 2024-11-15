@@ -102,7 +102,7 @@ def watch_for_wins_screen():
 if __name__ == "__main__":
 
     # Template image of the WINS screen
-    template_path = os.path.join(".", "training_images", 'wins_template.png')
+    template_path = os.path.join("..", "training_images", 'wins_template.png')
 
     # Load the template image with error checking
     template = load_template_image(template_path)
