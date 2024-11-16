@@ -7,8 +7,6 @@ import zipfile
 from datetime import datetime, timedelta
 import requests
 
-from src.updater import GITHUB_TOKEN
-
 # Paths
 version_file_path = "version.json"
 output_folder = "deploy_files"
