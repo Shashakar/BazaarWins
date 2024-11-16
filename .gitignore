@@ -20,3 +20,8 @@ src/screenshot.png
 /src/build
 /src/data
 /src/dist
+/build
+/deploy_files
+/dist
+/updater/__pycache__
+/updater/build
