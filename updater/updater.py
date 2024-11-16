@@ -11,8 +11,7 @@ import requests
 version_file_path = "version.json"
 output_folder = "deploy_files"
 
-# GitHub API and credentials
-token = "Z2l0aHViX3BhdF8xMUFHTUlSR1EwYU1SVEloVVpMZUFvX1Fvc1g4Rm53Q0w0YkNVdDFMNmtIZW1ubUoxYVBnMml3dkhoSjJWcGZXUThBQVZCTUxHSUdMVEtzVGI1"  # Replace with your GitHub personal access token
+token = "Z2l0aHViX3BhdF8xMUFHTUlSR1EwYU1SVEloVVpMZUFvX1Fvc1g4Rm53Q0w0YkNVdDFMNmtIZW1ubUoxYVBnMml3dkhoSjJWcGZXUThBQVZCTUxHSUdMVEtzVGI1"
 
 GITHUB_TOKEN = base64.b64decode(token).decode("utf-8")
 REPO_OWNER = "Shashakar"  # Replace with your GitHub username or organization name
