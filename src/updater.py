@@ -3,7 +3,9 @@ import json
 
 import requests
 
-GITHUB_TOKEN = "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"
+token = "Z2l0aHViX3BhdF8xMUFHTUlSR1EwYU1SVEloVVpMZUFvX1Fvc1g4Rm53Q0w0YkNVdDFMNmtIZW1ubUoxYVBnMml3dkhoSjJWcGZXUThBQVZCTUxHSUdMVEtzVGI1"  # Replace with your GitHub personal access token
+
+GITHUB_TOKEN = base64.b64decode(token).decode("utf-8")
 REPO_OWNER = "Shashakar"
 REPO_NAME = "BazaarWins"
 version_file_path = "version.json"

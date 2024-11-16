@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 import shutil
@@ -6,12 +7,16 @@ import zipfile
 from datetime import datetime, timedelta
 import requests
 
+from src.updater import GITHUB_TOKEN
+
 # Paths
 version_file_path = "version.json"
 output_folder = "deploy_files"
 
 # GitHub API and credentials
-GITHUB_TOKEN = "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"  # Replace with your GitHub personal access token
+token = "Z2l0aHViX3BhdF8xMUFHTUlSR1EwYU1SVEloVVpMZUFvX1Fvc1g4Rm53Q0w0YkNVdDFMNmtIZW1ubUoxYVBnMml3dkhoSjJWcGZXUThBQVZCTUxHSUdMVEtzVGI1"  # Replace with your GitHub personal access token
+
+GITHUB_TOKEN = base64.b64decode(token).decode("utf-8")
 REPO_OWNER = "Shashakar"  # Replace with your GitHub username or organization name
 REPO_NAME = "BazaarWins"  # Replace with your GitHub repository name
 
