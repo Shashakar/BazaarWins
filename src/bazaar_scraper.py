@@ -115,6 +115,10 @@ def workflow():
 
         logger.info(f"Items image uploaded to Cloudinary. URL: {items_image_url}")
 
+        # sometimes the game shows 6 wins while unfortunate journey is the actual status. Max is 3 wins for unfortunate journey.
+        if wins_status == "UNFORTUNATE JOURNEY" and wins_number == 6:
+            wins_number = 0
+
         game_stats = {
             "username": user,
             "wins": wins_number,
@@ -153,8 +157,7 @@ def looper():
                 screenshot = take_full_screenshot()
 
                 # Check if the WINS screen is visible
-                detected, _ = detect_wins_screen(screenshot, wins_template)
-
+                detected, _ = detect_wins_screen(screenshot, wins_template, .8)
                 if detected and not wins_screen_active:
                     # WINS screen detected for the first time
                     logger.info("WINS screen detected. Starting main workflow...")
@@ -164,9 +167,9 @@ def looper():
 
                 elif wins_screen_active:
                     # Check if the next screen is visible
-                    next_screen_detected, _ = detect_wins_screen(screenshot, next_screen_template)
+                    next_screen_detected, _ = detect_wins_screen(screenshot, next_screen_template, .65)
                     if next_screen_detected:
-                        logger.info("Next screen detected. Resetting state for watching the WINS screen.")
+                        logger.info("Next screen detected. Resetting state for watching the WINS screen. Good to continue.")
                         wins_screen_active = False
 
             else:

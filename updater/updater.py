@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import zipfile
 from datetime import datetime, timedelta
 import requests
@@ -11,7 +12,18 @@ import requests
 version_file_path = "version.json"
 output_folder = "deploy_files"
 
-token = "Z2l0aHViX3BhdF8xMUFHTUlSR1EwYU1SVEloVVpMZUFvX1Fvc1g4Rm53Q0w0YkNVdDFMNmtIZW1ubUoxYVBnMml3dkhoSjJWcGZXUThBQVZCTUxHSUdMVEtzVGI1"
+# read base64 encoded token from file
+if getattr(sys, 'frozen', False):  # Running as a PyInstaller executable
+    token_path = sys._MEIPASS
+else:
+    token_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+token_path = os.path.join(token_path, "github_token")
+print(token_path)
+
+# read base64 encoded token from file
+with open(token_path, "r") as token_file:
+    token = token_file.read().strip()
 
 GITHUB_TOKEN = base64.b64decode(token).decode("utf-8")
 REPO_OWNER = "Shashakar"  # Replace with your GitHub username or organization name
