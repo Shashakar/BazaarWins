@@ -22,31 +22,6 @@ def load_template_image(template_path):
     if not isinstance(template, np.ndarray):
         logger.error(f"Error: Loaded template is not a valid numpy array. Template path: '{template_path}'")
         return None
-    return template
-
-# Function to take a screenshot of the entire screen
-def take_full_screenshot():
-    screenshot = pyautogui.screenshot()
-    screenshot_np = np.array(screenshot)
-    screenshot_bgr = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2BGR)
-    return screenshot_bgr
-
-def get_bazaar_window_size():
-    try:
-        # Find the window by title, adjust the title to match your window
-        window = gw.getWindowsWithTitle("The Bazaar")[0]
-        return window.width, window.height
-    except IndexError:
-        logger.error("The Bazaar window is not found.")
-        return None, None
-
-def detect_wins_screen(screenshot, template_path):
-    template = load_template_image(template_path)
-    # Ensure the template is loaded and is a numpy array
-    if template is None or not isinstance(template, np.ndarray):
-        logger.error(f"Template image is not loaded or is not a valid numpy array. Cannot perform template matching")
-        return False, None
-
     try:
         # Get dimensions of "The Bazaar" window
         window_width, window_height = get_bazaar_window_size()
@@ -66,7 +41,35 @@ def detect_wins_screen(screenshot, template_path):
         new_template_width = int(template_width * scale)
         new_template_height = int(template_height * scale)
         resized_template = cv2.resize(template, (new_template_width, new_template_height), interpolation=cv2.INTER_AREA)
+        return resized_template
+    except Exception as e:
+        logger.error(f"Error occurred during template resizing: {e}")
+    return template
 
+# Function to take a screenshot of the entire screen
+def take_full_screenshot():
+    screenshot = pyautogui.screenshot()
+    screenshot_np = np.array(screenshot)
+    screenshot_bgr = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2BGR)
+    return screenshot_bgr
+
+def get_bazaar_window_size():
+    try:
+        # Find the window by title, adjust the title to match your window
+        window = gw.getWindowsWithTitle("The Bazaar")[0]
+        return window.width, window.height
+    except IndexError:
+        logger.error("The Bazaar window is not found.")
+        return None, None
+
+def detect_wins_screen(screenshot, template_path, accuracy):
+    template = load_template_image(template_path)
+    # Ensure the template is loaded and is a numpy array
+    if template is None or not isinstance(template, np.ndarray):
+        logger.error(f"Template image is not loaded or is not a valid numpy array. Cannot perform template matching")
+        return False, None
+
+    try:
         # Ensure the screenshot has 3 channels (convert to BGR if it is grayscale)
         if len(screenshot.shape) == 2:
             screenshot = cv2.cvtColor(screenshot, cv2.COLOR_GRAY2BGR)
@@ -75,11 +78,11 @@ def detect_wins_screen(screenshot, template_path):
         screenshot_gray = cv2.cvtColor(screenshot, cv2.COLOR_BGR2GRAY)
 
         # Perform template matching
-        result = cv2.matchTemplate(screenshot_gray, resized_template, cv2.TM_CCOEFF_NORMED)
+        result = cv2.matchTemplate(screenshot_gray, template, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
         # Threshold for detection
-        threshold = 0.8  # You may need to adjust this value
+        threshold = accuracy  # You may need to adjust this value
         if max_val >= threshold:
             logger.info("Still on existing WINS screen, waiting to proceed before resetting state.")
             return True, max_loc

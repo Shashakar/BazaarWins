@@ -25,3 +25,6 @@ src/screenshot.png
 /dist
 /updater/__pycache__
 /updater/build
+updater/BazaarWins.exe
+/updater/data
+/updater/deploy_files
