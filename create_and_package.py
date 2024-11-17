@@ -86,7 +86,7 @@ for item in os.listdir(dist_folder):
 print(f"Packaging complete. Files moved to '{version_folder_path}'")
 
 # Step 6: Create Release
-upload_url = create_release(version, GITHUB_TOKEN, REPO_OWNER, REPO_NAME)
+upload_url = create_release(version, REPO_OWNER, REPO_NAME)
 if upload_url is None:
     print("Release version may already exists, or failed to be created.")
     upload_url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/releases/tags/{version}"

@@ -31,7 +31,15 @@ def take_full_screenshot():
     screenshot_bgr = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2BGR)
     return screenshot_bgr
 
-# Function to detect the WINS screen using template matching
+def get_bazaar_window_size():
+    try:
+        # Find the window by title, adjust the title to match your window
+        window = gw.getWindowsWithTitle("The Bazaar")[0]
+        return window.width, window.height
+    except IndexError:
+        logger.error("The Bazaar window is not found.")
+        return None, None
+
 def detect_wins_screen(screenshot, template_path):
     template = load_template_image(template_path)
     # Ensure the template is loaded and is a numpy array
@@ -40,11 +48,34 @@ def detect_wins_screen(screenshot, template_path):
         return False, None
 
     try:
+        # Get dimensions of "The Bazaar" window
+        window_width, window_height = get_bazaar_window_size()
+        if window_width is None or window_height is None:
+            logger.error("Cannot get window dimensions for scaling.")
+            return False, None
+
+        # Get dimensions of the template
+        template_height, template_width = template.shape[:2]
+
+        # Calculate scaling factor to match the window's aspect ratio
+        scale_x = window_width / 1920
+        scale_y = window_height / 1200
+        scale = min(scale_x, scale_y)
+
+        # Resize the template image based on the scale
+        new_template_width = int(template_width * scale)
+        new_template_height = int(template_height * scale)
+        resized_template = cv2.resize(template, (new_template_width, new_template_height), interpolation=cv2.INTER_AREA)
+
+        # Ensure the screenshot has 3 channels (convert to BGR if it is grayscale)
+        if len(screenshot.shape) == 2:
+            screenshot = cv2.cvtColor(screenshot, cv2.COLOR_GRAY2BGR)
+
         # Convert screenshot to grayscale
         screenshot_gray = cv2.cvtColor(screenshot, cv2.COLOR_BGR2GRAY)
 
         # Perform template matching
-        result = cv2.matchTemplate(screenshot_gray, template, cv2.TM_CCOEFF_NORMED)
+        result = cv2.matchTemplate(screenshot_gray, resized_template, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
         # Threshold for detection
@@ -54,6 +85,7 @@ def detect_wins_screen(screenshot, template_path):
             return True, max_loc
     except Exception as e:
         logger.error(f"Error occurred during template matching: {e}")
+
 
     return False, None
 
@@ -102,7 +134,7 @@ def watch_for_wins_screen():
 if __name__ == "__main__":
 
     # Template image of the WINS screen
-    template_path = os.path.join("..", "training_images", 'wins_template.png')
+    template_path = os.path.join(".", "training_images", 'wins_template.png')
 
     # Load the template image with error checking
     template = load_template_image(template_path)

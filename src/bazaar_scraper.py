@@ -32,7 +32,7 @@ next_screen_template = os.path.join(templates_folder, "next_screen_template.png"
 # Set up logging
 logger = setup_logging(logging.DEBUG, "Main")
 
-data_folder = os.path.join("..", "data")
+data_folder = os.path.join(".", "data")
 
 items_image = os.path.join(data_folder, "_items.png")
 stats_image = os.path.join(data_folder, "_stats.png")
