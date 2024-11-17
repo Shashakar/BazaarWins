@@ -8,8 +8,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
-from github_api import get_repo_owner, get_repo_name, create_release
-from updater.updater import GITHUB_TOKEN
+from github_api import get_repo_owner, get_repo_name, create_release, get_github_token
 
 # Paths
 version_file_path = "version.json"
@@ -104,7 +103,7 @@ def upload_files_to_release(upload_url):
         if os.path.isfile(filepath):
             with open(filepath, "rb") as f:
                 file_headers = {
-                    "Authorization": f"token {GITHUB_TOKEN}",
+                    "Authorization": f"token {get_github_token()}",
                     "Content-Type": "application/zip"  # Adjust the content type if necessary
                 }
                 try:
@@ -125,7 +124,7 @@ def upload_files_to_release(upload_url):
 # Step 8: Get the upload URL of the existing release
 release_tag = version
 headers = {
-    "Authorization": f"token {GITHUB_TOKEN}",
+    "Authorization": f"token {get_github_token()}",
     "Accept": "application/vnd.github.v3+json"
 }
 response = requests.get(

@@ -5,23 +5,19 @@ from uu import decode
 
 import requests
 import os
-
-if getattr(sys, 'frozen', False):  # Running as a PyInstaller executable
-    token_dir = sys._MEIPASS
-else:
-    token_dir = os.path.dirname(os.path.abspath(__file__))
-
-
-token_file_path = os.path.join(token_dir, "github_token")
-print(token_file_path)
+BASE_URL = "https://bazaar-stats-2d776b50c345.herokuapp.com"
+SECRETS_URL = BASE_URL + "/api/secrets"
 
 def get_github_token():
-    # read base64 encoded token from file
-    with open(token_file_path, "r") as token_file:
-        token = token_file.read().strip()
-    decoded_token = base64.b64decode(token).decode("utf-8")
-    print(decoded_token)
-    return decoded_token
+    # gets token from the bazaar api
+    full_url = f"{SECRETS_URL}/github_token"
+    response = requests.get(full_url)
+    if response.status_code == 200:
+        token = response.json().get("value").strip()
+        return token
+    else:
+        print(f"Failed to get GitHub token: {response.status_code} - {response.text}")
+        exit(1)
 
 def get_version():
     try:

@@ -7,6 +7,7 @@ from logging_bazaar import setup_logging
 BASE_URL = "https://bazaar-stats-2d776b50c345.herokuapp.com"
 UPLOAD_ENDPOINT = f"{BASE_URL}/api/upload"
 GET_STATS_ENDPOINT = f"{BASE_URL}/api/stats"
+SECRETS_ENDPOINT = f"{BASE_URL}/api/secrets"
 
 logger = setup_logging(logging.DEBUG, "API")
 
@@ -34,6 +35,17 @@ def get_user_stats(username):
     except Exception as e:
         logger.error(f"An error occurred while retrieving user stats: {str(e)}")
         return None
+
+def get_github_token():
+    # gets token from the bazaar api
+    full_url = f"{SECRETS_ENDPOINT}/github_token"
+    response = requests.get(full_url)
+    if response.status_code == 200:
+        token = response.json().get("value").strip()
+        return token
+    else:
+        print(f"Failed to get GitHub token: {response.status_code} - {response.text}")
+        exit(1)
 
 def workflow():
     try:

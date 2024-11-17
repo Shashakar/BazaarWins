@@ -7,20 +7,21 @@ import sys
 
 import requests
 
+BASE_URL = "https://bazaar-stats-2d776b50c345.herokuapp.com"
+SECRETS_ENDPOINT = f"{BASE_URL}/api/secrets"
 
-if getattr(sys, 'frozen', False):  # Running as a PyInstaller executable
-    token_path = sys._MEIPASS
-else:
-    token_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+def get_github_token():
+    # gets token from the bazaar api
+    full_url = f"{SECRETS_ENDPOINT}/github_token"
+    response = requests.get(full_url)
+    if response.status_code == 200:
+        token = response.json().get("value").strip()
+        return token
+    else:
+        print(f"Failed to get GitHub token: {response.status_code} - {response.text}")
+        exit(1)
 
-token_path = os.path.join(token_path, "github_token")
-print(token_path)
-
-# read base64 encoded token from file
-with open(token_path, "r") as token_file:
-    token = token_file.read().strip()
-
-GITHUB_TOKEN = base64.b64decode(token).decode("utf-8")
+GITHUB_TOKEN = get_github_token()
 REPO_OWNER = "Shashakar"
 REPO_NAME = "BazaarWins"
 version_file_path = "version.json"
@@ -70,9 +71,15 @@ def check_for_updates():
                 should_update = version_data.get("should_update", True)
         except FileNotFoundError:
             run_updater()
+            return
+            # close this subprocess
 
-
-        print(f"Current version: {current_version}")
+        try:
+            print(f"Current version: {current_version}")
+            test_update = should_update
+        except Exception as e:
+            current_version = "0.0.0"
+            should_update = True
         if latest_version != current_version and should_update:
             print(f"New version available: {latest_version}")
             run_updater()
@@ -83,4 +90,4 @@ def check_for_updates():
 
 def run_updater():
     print("Running updater..")
-    #subprocess.Popen("./updater.exe")
+    subprocess.Popen("./updater.exe")

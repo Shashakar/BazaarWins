@@ -12,20 +12,21 @@ import requests
 version_file_path = "version.json"
 output_folder = "deploy_files"
 
-# read base64 encoded token from file
-if getattr(sys, 'frozen', False):  # Running as a PyInstaller executable
-    token_path = sys._MEIPASS
-else:
-    token_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+BASE_URL = "https://bazaar-stats-2d776b50c345.herokuapp.com"
+SECRETS_ENDPOINT = f"{BASE_URL}/api/secrets"
 
-token_path = os.path.join(token_path, "github_token")
-print(token_path)
+def get_github_token():
+    # gets token from the bazaar api
+    full_url = f"{SECRETS_ENDPOINT}/github_token"
+    response = requests.get(full_url)
+    if response.status_code == 200:
+        token = response.json().get("value").strip()
+        return token
+    else:
+        print(f"Failed to get GitHub token: {response.status_code} - {response.text}")
+        exit(1)
 
-# read base64 encoded token from file
-with open(token_path, "r") as token_file:
-    token = token_file.read().strip()
-
-GITHUB_TOKEN = base64.b64decode(token).decode("utf-8")
+GITHUB_TOKEN = get_github_token()
 REPO_OWNER = "Shashakar"  # Replace with your GitHub username or organization name
 REPO_NAME = "BazaarWins"  # Replace with your GitHub repository name
 
@@ -45,7 +46,7 @@ def check_for_updates():
         latest_release = response.json()
         latest_version = latest_release["tag_name"].strip()
         print(f"Latest version available: {latest_version}")
-
+        current_version = "0.0.0"
         # Load version data
         try:
             with open(version_file_path, "r") as version_file:
@@ -53,7 +54,7 @@ def check_for_updates():
                 current_version = version_data.get("version", "0.0.0").strip()
                 last_check = datetime.strptime(version_data.get("last_check", "1970-01-01"), "%Y-%m-%d")
                 should_update = version_data.get("should_update", True)
-        except FileNotFoundError:
+        except Exception as e:
             print("Version file not found. Creating a new one...")
             version_data = {
                 "version": "0.0.0",
@@ -140,6 +141,9 @@ def replace_current_executable(new_executable_path, version_data, latest_version
     current_executable_path = os.path.join(os.getcwd(), f"{REPO_NAME}.exe")
     backup_path = current_executable_path + ".backup"
 
+    # if backup file already exists, delete it
+    if os.path.exists(backup_path):
+        os.remove(backup_path)
     # Backup current executable
     if os.path.exists(current_executable_path):
         print(f"Backing up current executable to {backup_path}")
@@ -175,10 +179,10 @@ if __name__ == "__main__":
     check_for_updates()
     print("Update check complete.")
 
-    current_executable_path = os.path.join(os.getcwd(), f"{REPO_NAME}.exe")
-    print(f"Launching the application: {current_executable_path}")
+    # current_executable_path = os.path.join(os.getcwd(), f"{REPO_NAME}.exe")
+    # print(f"Launching the application: {current_executable_path}")
 
-    try:
-        subprocess.Popen([current_executable_path])
-    except Exception as e:
-        print(f"Failed to launch the application: {e}")
+    # try:
+    #     subprocess.Popen([current_executable_path])
+    # except Exception as e:
+    #     print(f"Failed to launch the application: {e}")
