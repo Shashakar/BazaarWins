@@ -118,6 +118,8 @@ def watch_for_wins_screen():
                 if detected:
                     # Take a screenshot and save it
                     screenshot_path = f'wins_screen_{int(time.time())}.png'
+                    time.sleep(1.5)  # Wait for the screen to fully render
+                    screenshot = take_full_screenshot()
                     cv2.imwrite(screenshot_path, screenshot)
                     logger.info(f"WINS screen detected and saved to: {screenshot_path}")
 

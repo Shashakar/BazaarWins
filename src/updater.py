@@ -82,11 +82,13 @@ def check_for_updates():
             should_update = True
         if latest_version != current_version and should_update:
             print(f"New version available: {latest_version}")
-            run_updater()
+            return True
         else:
             print("No updates available.")
+            return False
     else:
         print(f"Failed to check for updates. {response.status_code} - {response.text}\nTry again later.")
+        return False
 
 def run_updater():
     print("Running updater..")

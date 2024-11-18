@@ -110,10 +110,8 @@ def workflow():
         # Upload the items image to Cloudinary
         items_image_url = upload_image_to_cloudinary(items_image)
         if not items_image_url:
-            logger.error("Failed to upload items image to Cloudinary.")
             items_image_url = "Error"
 
-        logger.info(f"Items image uploaded to Cloudinary. URL: {items_image_url}")
 
         # sometimes the game shows 6 wins while unfortunate journey is the actual status. Max is 3 wins for unfortunate journey.
         if wins_status == "UNFORTUNATE JOURNEY" and wins_number == 6:
@@ -161,7 +159,7 @@ def looper():
                 if detected and not wins_screen_active:
                     # WINS screen detected for the first time
                     logger.info("WINS screen detected. Starting main workflow...")
-                    time.sleep(1.5)
+                    time.sleep(3)
                     workflow()  # Trigger the workflow to scrape and upload stats
                     wins_screen_active = True  # Set flag to prevent duplicate processing
 

@@ -53,7 +53,7 @@ def get_stats_from_image(image_path):
         xp = result[2][1]
         income = result[3][1]
         money = result[4][1]
-        logger.info(f"Health: {health}, Prestige: {prestige}, XP: {xp}, Income: {income}, Money: {money}")
+        #logger.debug(f"Health: {health}, Prestige: {prestige}, XP: {xp}, Income: {income}, Money: {money}")
         return health, prestige, xp, income, money
     except Exception as e:
         logger.error(f"Error in get_stats_from_image: {e}")
@@ -63,7 +63,7 @@ def get_first_text_from_image(image_path):
     try:
         result = get_text_from_image(image_path)
         text = result[0][1]
-        logger.info(f"First Text: {text}")
+        #logger.debug(f"First Text: {text}")
         return text
     except Exception as e:
         logger.error(f"Error in get_first_text_from_image: {e}")
