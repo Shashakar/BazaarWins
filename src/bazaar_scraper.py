@@ -118,15 +118,15 @@ def workflow():
             wins_number = 0
 
         game_stats = {
-            "username": user,
-            "wins": wins_number,
-            "victory_type": wins_status,
-            "health": health,
-            "prestige": prestige,
-            "xp": xp,
-            "income": income,
-            "money": money,
-            "items_image": items_image_url
+            "username": user or "ERR",
+            "wins": wins_number or -1,
+            "victory_type": wins_status or "ERR",
+            "health": health or -1,
+            "prestige": prestige or -1,
+            "xp": xp or -1,
+            "income": income or -1,
+            "money": money or -1,
+            "items_image": items_image_url or "ERR"
         }
         upload_game_stats(game_stats)
 
