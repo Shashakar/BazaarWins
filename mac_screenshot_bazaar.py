@@ -7,7 +7,7 @@ from logging_bazaar import setup_logging
 # Set up logging
 logger = setup_logging(logging.DEBUG, "MacScreenshotHandler")
 
-data_folder = os.path.join(".", "data")
+data_folder = os.path.join("src", "data")
 window_title = "The Bazaar"
 
 # Function to capture the screenshot of a specific window

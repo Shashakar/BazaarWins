@@ -16,7 +16,7 @@ def handle_full_screenshot(path):
 
 def get_text_from_image(image_path):
     try:
-        reader = easyocr.Reader(['en'])  # Specify the languages to use
+        reader = easyocr.Reader(['en'], gpu=False)  # Specify the languages to use
         result = reader.readtext(image_path)
         return result
     except Exception as e:

@@ -7,7 +7,6 @@ import platform
 from bazaar_api import upload_game_stats
 from cloudinary_handler import upload_image_to_cloudinary
 from logging_bazaar import setup_logging
-from src import mac_screenshot_bazaar
 from text_detection import get_user_and_title_from_image, get_wins_from_image, \
     get_first_text_from_image
 from crop_images import crop_and_save_images
@@ -71,10 +70,8 @@ def workflow():
     try:
         # Get Screenshot of The Bazaar window
         logger.info("Taking screenshot of 'The Bazaar' window.")
-        if platform.system() == "Windows":
-            screenshot_path = take_screenshot_of_window()
-        else:
-            mac_screenshot_bazaar.take_screenshot_of_window()
+
+        screenshot_path = take_screenshot_of_window()
         if not screenshot_path:
             logger.error("Failed to take screenshot of 'The Bazaar' window.")
             return
@@ -112,7 +109,7 @@ def workflow():
             f"Max Health: {health}\nPrestige Remaining: {prestige}\nXP: {xp}\nIncome Per Turn: {income}\nMoney Remaining: {money}")
 
         # Upload the items image to Cloudinary
-        items_image_url = upload_image_to_cloudinary(items_image)
+        items_image_url = upload_image_to_cloudinary(screenshot_path)
         if not items_image_url:
             items_image_url = "Error"
 

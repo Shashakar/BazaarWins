@@ -23,7 +23,7 @@ cloudinary.config(
 # Function to upload image to Cloudinary
 def upload_image_to_cloudinary(image_path):
     try:
-        response = cloudinary.uploader.upload(image_path)
+        response = cloudinary.uploader.upload(image_path, wait=True)
         # The response contains the URL of the uploaded image
         image_url = response.get('secure_url')
         if image_url:
