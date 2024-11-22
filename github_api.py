@@ -35,9 +35,9 @@ def get_repo_name():
 def get_repo_owner():
     return "Shashakar"
 
-def create_release(version, owner, name):
+def create_release(version, owner, name, description):
     RELEASE_NAME = f"Version {version}"  # Human-readable name of the release
-    RELEASE_DESCRIPTION = f"Release version {version}."  # Description for the release
+    RELEASE_DESCRIPTION = description  # Description for the release
 
     # API setup
     headers = {

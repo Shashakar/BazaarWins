@@ -104,6 +104,8 @@ def download_latest_version(download_url, latest_version, version_data):
     response = requests.get(download_url, headers=headers, stream=True)
     if response.status_code == 200:
         latest_version_zip_path = os.path.join(output_folder, latest_version, f"{REPO_NAME}.zip")
+        if os.path.exists(latest_version_zip_path):
+            os.remove(latest_version_zip_path)
         os.makedirs(os.path.dirname(latest_version_zip_path), exist_ok=True)
         with open(latest_version_zip_path, "wb") as f:
             shutil.copyfileobj(response.raw, f)

@@ -118,16 +118,27 @@ def workflow():
         if wins_status == "UNFORTUNATE JOURNEY" and wins_number == 6:
             wins_number = 0
 
+        # Ensure each field follows the correct db schema
+        # username = string
+        # wins = int
+        # victory_type = string
+        # health = int
+        # prestige = int
+        # xp = int
+        # income = int
+        # money = int
+        # items_image = string
+
         game_stats = {
-            "username": user or "ERR",
-            "wins": wins_number or -1,
-            "victory_type": wins_status or "ERR",
-            "health": health or -1,
-            "prestige": prestige or -1,
-            "xp": xp or -1,
-            "income": income or -1,
-            "money": money or -1,
-            "items_image": items_image_url or "ERR"
+            "username": str(user) if user else "ERR",
+            "wins": int(wins_number) if wins_number is not None else -1,
+            "victory_type": str(wins_status) if wins_status else "ERR",
+            "health": int(health) if health is not None else -1,
+            "prestige": int(prestige) if prestige is not None else -1,
+            "xp": int(xp) if xp is not None else -1,
+            "income": int(income) if income is not None else -1,
+            "money": int(money) if money is not None else -1,
+            "items_image": str(items_image_url) if items_image_url else "ERR"
         }
         upload_game_stats(game_stats)
 
