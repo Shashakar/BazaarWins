@@ -5,8 +5,9 @@ from logging_bazaar import setup_logging
 
 #BASE_URL = "http://127.0.0.1:5000"
 BASE_URL = "https://bazaar-stats-2d776b50c345.herokuapp.com"
-UPLOAD_ENDPOINT = f"{BASE_URL}/api/upload"
-GET_STATS_ENDPOINT = f"{BASE_URL}/api/stats"
+
+STATS_ENDPOINT = f"{BASE_URL}/api/stats"
+UPLOAD_ENDPOINT = f"{STATS_ENDPOINT}/upload"
 SECRETS_ENDPOINT = f"{BASE_URL}/api/secrets"
 
 logger = setup_logging(logging.DEBUG, "API")
@@ -24,7 +25,7 @@ def upload_game_stats(game_stats):
 
 def get_user_stats(username):
     try:
-        response = requests.get(f"{GET_STATS_ENDPOINT}/{username}")
+        response = requests.get(f"{STATS_ENDPOINT}/{username}")
         if response.status_code == 200:
             stats = response.json()
             logger.info(f"Retrieved stats for {username}: {stats}")
