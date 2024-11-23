@@ -8,6 +8,7 @@ import platform
 from bazaar_api import upload_game_stats
 from cloudinary_handler import upload_image_to_cloudinary
 from logging_bazaar import setup_logging
+from src.windowstray import notify_user
 from text_detection import get_user_and_title_from_image, get_wins_from_image, \
     get_first_text_from_image
 from crop_images import crop_and_save_images
@@ -70,6 +71,7 @@ stats_crop_coords = {
 
 
 def workflow():
+    notify_user("Found WINS screen. Starting workflow...")
     if not workflow_lock.acquire(blocking=False):
         logger.warning("Workflow already running. Skipping redundant execution.")
         return
@@ -147,6 +149,7 @@ def workflow():
             "items_image": str(items_image_url) if items_image_url else "ERR"
         }
         upload_game_stats(game_stats)
+        notify_user(f"Stats uploaded for {user}! Good to continue.")
 
     except Exception as e:
         logger.error(f"An error occurred during the workflow: {e}")
