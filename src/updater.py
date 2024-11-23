@@ -6,9 +6,12 @@ import json
 import sys
 
 import requests
+import logging
 
 BASE_URL = "https://bazaar-stats-2d776b50c345.herokuapp.com"
 SECRETS_ENDPOINT = f"{BASE_URL}/api/secrets"
+
+logger = logging.getLogger("Updater")
 
 def get_github_token():
     # gets token from the bazaar api
@@ -47,6 +50,18 @@ def check_for_available_updater():
     else:
         print("No deploy_files folder found.")
 
+# checks to see if the "should_update" flag is set to True
+def should_check_for_updates():
+    try:
+        logger.info("Checking if update is allowed..")
+        with open(version_file_path, "r") as version_file:
+            version_data = json.load(version_file)
+            should_update = version_data.get("should_update", True)
+            logger.debug(f"'should_update' flag: {should_update}")
+            return should_update
+    except FileNotFoundError:
+        logger.error("Version file not found. Update needed.")
+        return True
 
 def check_for_updates():
     headers = {
