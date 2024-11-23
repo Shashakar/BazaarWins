@@ -149,4 +149,4 @@ def upload_to_github():
 
 if __name__ == "__main__":
     package_with_pyinstaller()
-    #upload_to_github()
+    upload_to_github()
