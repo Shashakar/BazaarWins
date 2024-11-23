@@ -1,6 +1,7 @@
 import os
 import logging
 import sys
+import threading
 import time
 import platform
 
@@ -11,6 +12,8 @@ from text_detection import get_user_and_title_from_image, get_wins_from_image, \
     get_first_text_from_image
 from crop_images import crop_and_save_images
 from watcher import is_bazaar_active, detect_wins_screen, take_full_screenshot
+
+workflow_lock = threading.Lock()
 
 if getattr(sys, 'frozen', False):  # Running as a PyInstaller executable
     base_path = sys._MEIPASS
@@ -67,6 +70,9 @@ stats_crop_coords = {
 
 
 def workflow():
+    if not workflow_lock.acquire(blocking=False):
+        logger.warning("Workflow already running. Skipping redundant execution.")
+        return
     try:
         # Get Screenshot of The Bazaar window
         logger.info("Taking screenshot of 'The Bazaar' window.")
@@ -131,19 +137,21 @@ def workflow():
 
         game_stats = {
             "username": str(user) if user else "ERR",
-            "wins": int(wins_number) if wins_number is not None else -1,
+            "wins": int(wins_number) if wins_number is not None else 0,
             "victory_type": str(wins_status) if wins_status else "ERR",
-            "health": int(health) if health is not None else -1,
-            "prestige": int(prestige) if prestige is not None else -1,
-            "xp": int(xp) if xp is not None else -1,
-            "income": int(income) if income is not None else -1,
-            "money": int(money) if money is not None else -1,
+            "health": int(health) if health is not None else 0,
+            "prestige": int(prestige) if prestige is not None else 0,
+            "xp": int(xp) if xp is not None else 0,
+            "income": int(income) if income is not None else 0,
+            "money": int(money) if money is not None else 0,
             "items_image": str(items_image_url) if items_image_url else "ERR"
         }
         upload_game_stats(game_stats)
 
     except Exception as e:
         logger.error(f"An error occurred during the workflow: {e}")
+    finally:
+        workflow_lock.release()
 
 def looper():
     wins_screen_active = False
