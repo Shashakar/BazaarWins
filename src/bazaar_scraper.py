@@ -8,6 +8,7 @@ import platform
 from bazaar_api import upload_game_stats
 from cloudinary_handler import upload_image_to_cloudinary
 from logging_bazaar import setup_logging
+from src.screen_overlay import start_overlay_thread, hide_overlay
 from src.windowstray import notify_user
 from text_detection import get_user_and_title_from_image, get_wins_from_image, \
     get_first_text_from_image
@@ -72,6 +73,7 @@ stats_crop_coords = {
 
 def workflow():
     notify_user("Found WINS screen. Starting workflow...")
+    time.sleep(3)
     if not workflow_lock.acquire(blocking=False):
         logger.warning("Workflow already running. Skipping redundant execution.")
         return
@@ -180,10 +182,11 @@ def looper():
                 # Check if the WINS screen is visible
                 detected, _ = detect_wins_screen(screenshot, wins_template, .8)
                 if detected and not wins_screen_active:
+                    queue = start_overlay_thread()
                     # WINS screen detected for the first time
                     logger.info("WINS screen detected. Starting main workflow...")
-                    time.sleep(3)
                     workflow()  # Trigger the workflow to scrape and upload stats
+                    hide_overlay(queue)
                     wins_screen_active = True  # Set flag to prevent duplicate processing
 
                 elif wins_screen_active:
