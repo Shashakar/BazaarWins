@@ -23,6 +23,7 @@ DESCRIPTION = input("What is going into this release?\n")
 version_folder_path = ""
 
 def package_with_pyinstaller():
+    global version, version_folder_path
     # Step 1: Run PyInstaller
     # Bazaar Wins
     try:
@@ -89,6 +90,7 @@ def package_with_pyinstaller():
     print(f"Packaging complete. Files moved to '{version_folder_path}'")
 
 def upload_to_github():
+    global version, version_folder_path
     # Step 6: Create Release
     upload_url = create_release(version, REPO_OWNER, REPO_NAME, DESCRIPTION)
     if upload_url is None:
